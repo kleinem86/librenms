@@ -64,6 +64,15 @@ class Api extends Transport
         if (isset($auth) && !empty($auth[0])) {
             $request_opts['auth'] = $auth;
         }
+        $proxy = get_proxy(); // maybe replace with global function, analogue to set_curl_proxy()
+        if (!empty($proxy)) {
+            $proxy = 'tcp://' . str_replace(array("http://", "https://"), "", rtrim($proxy, "/") );
+            $request_opts = [    'proxy' => [
+                'http'  =>  $proxy,
+                'https' =>  $proxy
+                ]
+            ];
+        }
         if ($method == "get") {
             $request_opts['query'] = $query;
             $res = $client->request('GET', $host, $request_opts);
